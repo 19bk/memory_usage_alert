@@ -6,6 +6,7 @@ import time
 API_URL = 'http://localhost:8080/receive-alert'
 
 
+
 # Set the memory usage threshold i used percentage here
 MEMORY_THRESHOLD = 40  # 80%
 
@@ -18,10 +19,14 @@ def send_alert(memory_usage):
     """
     payload = {'memoryUsage': memory_usage}
     try:
-        response = requests.post(API_URL, json=payload)
+        response = requests.post(API_URL, json=payload, timeout=10)
+        response.raise_for_status()
         print(f'Alert sent: {response.text}')
+    except requests.exceptions.RequestException as e:
+        print(f'Failed to send alert due to request exception: {e}')
     except Exception as e:
         print(f'Failed to send alert: {e}')
+
 
 while True:
     memory_info = psutil.virtual_memory()
