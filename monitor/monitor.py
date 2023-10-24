@@ -3,10 +3,11 @@ import requests
 import time
 
 # Flask API endpoint
-API_URL = 'http://localhost:5000/receive-alert'
+API_URL = 'http://localhost:8080/receive-alert'
+
 
 # Set the memory usage threshold i used percentage here
-MEMORY_THRESHOLD = 60  # 80%
+MEMORY_THRESHOLD = 40  # 80%
 
 def send_alert(memory_usage):
     """
