@@ -1,71 +1,56 @@
-### Memory Usage Alert System
+# Memory Usage Alert System
 
-This project consists of a Python script that monitors the system's memory usage and sends an alert to a Flask API when the memory usage exceeds a specified threshold.
+This project provides a way to monitor system memory usage and trigger an alert if memory usage exceeds a predefined threshold. The alert is sent as an HTTP request to a Flask API, which then processes and acknowledges the alert.
 
-### Prerequisites
+## Components:
 
-- Python
-- pip (Python package installer)
-- Virtual environment (optional)
+1. **Memory Monitor Script (`monitor.py`)**: A Python script that continuously checks the system's memory usage using the `psutil` library. If the memory usage exceeds the set threshold, it sends an alert to the Flask API.
 
-### Installation
+2. **Flask API (`app.py`)**: A Flask-based REST API that listens for alerts from the monitor script. It provides an endpoint (`/receive-alert`) to receive and acknowledge memory usage alerts.
 
-1. **Clone the repository**
-    ```bash
-    git clone https://github.com/your-username/your-repository-name.git
-    cd your-repository-name
-    ```
+3. **Docker & Docker Compose**: The project uses Docker to containerize the Flask API and a MongoDB database. Docker Compose is used to manage and orchestrate these containers.
 
-2. **Create and activate a virtual environment (optional)**
-    - On Windows:
-        ```bash
-        python -m venv myenv
-        .\myenv\Scripts\activate
-        ```
-    - On Unix or MacOS:
-        ```bash
-        python -m venv myenv
-        source myenv/bin/activate
-        ```
+## Setup and Running:
 
-3. **Install required packages**
-    ```bash
-    pip install flask psutil requests
-    ```
+### Prerequisites:
 
-### Running the Flask API
+- Docker and Docker Compose installed.
+- Python 3.x with `pip` for running the memory monitor script.
 
-1. **Start the Flask app**
-    ```bash
-    python app.py
-    ```
-    The API will be running on [http://localhost:5000/](http://localhost:5000/).
+### Steps:
 
-### Running the Memory Monitoring Script
+1. **Clone the repository**:
+   ```bash
+   git clone [repository_url] memory_usage_alert
+   cd memory_usage_alert
+   ```
 
-1. **Open a new terminal window or tab**
+2. **Build and Start the Containers**:
+   ```bash
+   sudo docker-compose up --build
+   ```
 
-2. **Activate the virtual environment (if you are using one)**
+3. **Run the Memory Monitor Script**:
+   In a separate terminal:
+   ```bash
+   cd monitor
+   pip install -r requirements.txt
+   python monitor.py
+   ```
 
-3. **Run the memory monitoring script**
-    ```bash
-    python memory_monitor.py
-    ```
+4. **Testing**:
+   The Flask API provides a `/value` endpoint for CRUD operations with key-value pairs stored in the MongoDB database. You can use tools like `curl` or Postman to test these endpoints.
 
-    Make sure to replace `'http://localhost:5000/receive-alert'` with the actual URL where your Flask API is running if it's different.
+## Configuration:
 
-### Testing the System
+- **Memory Threshold**: The memory usage threshold after which an alert is sent is defined in `monitor.py` as `MEMORY_THRESHOLD`. By default, it's set to 40%.
 
-When the memory usage exceeds the specified threshold, the `memory_monitor.py` script will send an alert to the Flask API. You can also manually test the API using curl:
+- **API URL**: The Flask API endpoint to which the monitor script sends alerts is defined in `monitor.py` as `API_URL`. It's set to `http://localhost:8080/receive-alert` by default.
 
-```bash
-curl -X POST http://localhost:5000/receive-alert -H "Content-Type: application/json" -d '{"memoryUsage": 90}'
-```
+## Troubleshooting:
 
-You should receive a response indicating that the alert has been received.
+1. **Docker Issues**: If you face issues with Docker or Docker Compose, ensure that the Docker daemon is running. Restarting the Docker service or rebooting the system can resolve many common issues.
 
-### Customization
+2. **Connection Issues**: Ensure that the Flask API is running and accessible if the monitor script cannot send alerts. Check the Docker logs for any errors.
 
-- You can modify the `MEMORY_THRESHOLD` in the `memory_monitor.py` script to change the memory usage threshold for sending alerts.
-- The Flask API can be extended to take additional actions when an alert is received, such as sending email notifications or logging alerts to a file.
-
+3. **Dependencies**: Ensure that all Python dependencies are installed, both for the Flask API (in the Docker container) and the memory monitor script.
